@@ -6,6 +6,6 @@
 <name>Alec Ten Harmsel</name>
 </maintainer>
 <longdescription lang="en">
-This thing does things.
+Mesos is a general purpose scheduler.
 </longdescription>
 </pkgmetadata>
