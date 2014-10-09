@@ -7,49 +7,44 @@ PYTHON_COMPAT=( python2_7 )
 JAVA_PKG_IUSE="doc examples source"
 JAVA_ANT_DISABLE_ANT_CORE_DEP="yes"
 
-inherit eutils  autotools versionator multilib flag-o-matic 
-
-MY_PV=${PV/_/}
+inherit eutils	autotools versionator multilib flag-o-matic
 
 DESCRIPTION="Spark supports cyclic data flows and in-memory computing"
 HOMEPAGE="http://spark.apache.org/"
 
-SRC_URI="http://www.apache.org/dist/spark/spark-1.1.0/${P}.tgz" 
+SRC_URI="http://apache.org/dist/${PN}/${P}/${P}.tgz"
 
 LICENSE="Apache-2.0"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
 IUSE="java python scala"
 
-DEPEND="net-misc/curl
-        dev-libs/cyrus-sasl
-		python? ( dev-lang/python dev-python/boto )
-		java? ( virtual/jdk )
-		scala? ( dev-lang/scala )
-		dev-java/maven-bin "
+RDEPEND="python? ( dev-lang/python dev-python/boto )
+		>=virtual/jre-1.6
+		net-misc/curl
+		dev-libs/cyrus-sasl"
+DEPEND=">=virtual/jdk-1.6
+		dev-lang/scala
+		dev-java/maven-bin
+		${RDEPEND}"
 
-RDEPEND=" python? ( dev-lang/python )
-		  >=virtual/jdk-1.6
-		  scala? ( dev-lang/scala )
-		  dev-java/maven-bin
-		${DEPEND}"
+#S="${WORKDIR}/${P}"
 
-S="${WORKDIR}/${P}"
+#ECONF_SOURCE="${S}"
 
-ECONF_SOURCE="${S}"
-
-src_prepare() {
-    mkdir "${S}/build" || die " making dir problem"
-}
+#src_prepare() {
+#	 mkdir "${S}/build" || die " making dir problem"
+#}
 
 src_compile() {
-    cd "${S}"
-	./sbt/sbt assembly || die "assembly build failed"
-	./make-distribution.sh || die "problem with make-distribution.sh"
+	#cd "${S}"
+	#./sbt/sbt assembly || die "assembly build failed"
+	./make-distribution.sh --tgz || die "problem with make-distribution.sh"
 }
 
 src_install() {
-    cd "${S}/build"
-    emake DESTDIR="${D}" install || die "emake install failed"
+	#cd "${S}/build"
+	#emake DESTDIR="${D}" install || die "emake install failed"
+	cp -r ${WORKDIR}/dist ${D}
 }
 
