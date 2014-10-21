@@ -26,11 +26,6 @@ DEPEND=">=virtual/jdk-1.6
 		dev-java/maven-bin
 		${RDEPEND}"
 
-src_prepare() {
-	enewuser spark
-	enewgroup spark
-}
-
 src_compile() {
 	./make-distribution.sh || die "Failed to compile Spark"
 }
@@ -52,9 +47,15 @@ src_install() {
 	doins dist/conf/spark-env.sh.template
 
 	exeinto /etc/init.d
-	doexe ${FILESDIR}/
+	doexe "${FILESDIR}"/"${PV}"/spark-master
+	doexe "${FILESDIR}"/"${PV}"/spark-worker
 
 	dodir /usr/lib/${P}
-	cp -r dist/lib ${D}/usr/lib/${P}/lib
-	use python && cp -r dist/python ${D}/usr/lib/${P}/python
+	cp -r dist/lib "${D}"/usr/lib/${P}/lib
+	use python && cp -r dist/python "${D}"/usr/lib/${P}/python
+}
+
+pkg_postinst() {
+	elog "You must create /etc/spark/spark-env.sh from"
+	elog "/etc/spark/spark-env.sh.template before running Spark"
 }

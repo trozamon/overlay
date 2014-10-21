@@ -1,0 +1,36 @@
+# Alec Ten Harmsel <alec@alectenharmsel.com>
+
+SPARK_LOG_DIR=/var/log/spark
+
+. /etc/spark/spark-env.sh
+
+check_config() {
+	if [ ! -f /etc/spark/spark-env.sh ]
+	then
+		eerror "Please create /etc/spark/spark-env.sh"
+		eerror "A template was installed at /etc/spark/spark-env.sh.template"
+		return 1
+	fi
+	return 0
+}
+
+start() {
+	ebegin "Starting spark-worker"
+	check_config || return $?
+	SPARK_CONF_DIR="/etc/spark" start-stop-daemon --start \
+	    --exec /usr/bin/spark-class \
+	    --pidfile /var/run/spark-worker.pid \
+	    -- \
+	    org.apache.spark.deploy.worker.Worker \
+	    --ip $SPARK_MASTER_IP --p
+	eend $? "Failed to start spark-worker"
+}
+
+stop() {
+	ebegin "Stopping spark-worker"
+	check_config || return $?
+	start-stop-daemon --stop \
+		--pidfile /var/run/spark-worker.pid \
+		--exec /usr/bin/spark-class
+	eend $? "Failed to stop spark-worker"
+}
