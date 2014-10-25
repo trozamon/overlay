@@ -32,30 +32,23 @@ src_compile() {
 
 src_install() {
 	exeinto /usr/bin
-	doexe dist/bin/beeline
-	use python && doexe dist/bin/pyspark
-	doexe dist/bin/spark-class
-	doexe dist/bin/spark-shell
-	doexe dist/bin/spark-sql
-	doexe dist/bin/spark-submit
-
-	insinto /etc/spark
-	doins dist/conf/fairscheduler.xml.template
-	doins dist/conf/log4j.properties.template
-	doins dist/conf/metrics.properties.template
-	doins dist/conf/spark-defaults.conf.template
-	doins dist/conf/spark-env.sh.template
+	doexe "${FILESDIR}"/"${PV}"/beeline
+	doexe "${FILESDIR}"/"${PV}"/spark-class
+	doexe "${FILESDIR}"/"${PV}"/spark-shell
+	doexe "${FILESDIR}"/"${PV}"/spark-sql
+	doexe "${FILESDIR}"/"${PV}"/spark-submit
+	use python && doexe "${FILEDIR}"/"${PV}"/pyspark
 
 	exeinto /etc/init.d
 	doexe "${FILESDIR}"/"${PV}"/spark-master
 	doexe "${FILESDIR}"/"${PV}"/spark-worker
 
 	dodir /usr/lib/${P}
-	cp -r dist/lib "${D}"/usr/lib/${P}/lib
-	use python && cp -r dist/python "${D}"/usr/lib/${P}/python
+	cp -r dist/* "${D}"/usr/lib/${P}/
 }
 
 pkg_postinst() {
+	ln -s /usr/lib/${P}/conf /etc/spark
 	elog "You must create /etc/spark/spark-env.sh from"
 	elog "/etc/spark/spark-env.sh.template before running Spark"
 }
