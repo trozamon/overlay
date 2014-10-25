@@ -1,8 +1,8 @@
-# Alec Ten Harmsel <alec@alectenharmsel.com>
+#!/sbin/runscript
 
-SPARK_LOG_DIR=/var/log/spark
+test -f /etc/spark/spark-env.sh && . /etc/spark/spark-env.sh
 
-. /etc/spark/spark-env.sh
+pidfile="/var/run/spark-worker.pid"
 
 check_config() {
 	if [ ! -f /etc/spark/spark-env.sh ]
@@ -11,26 +11,77 @@ check_config() {
 		eerror "A template was installed at /etc/spark/spark-env.sh.template"
 		return 1
 	fi
+	if [ -z $SPARK_WORKER_CORES ]
+	then
+		eerror "You must set SPARK_WORKER_CORES in /etc/spark/spark-env.sh"
+		return 1
+	fi
+	if [ -z $SPARK_WORKER_MEMORY ]
+	then
+		eerror "You must set SPARK_WORKER_MEMORY in /etc/spark/spark-env.sh"
+		return 1
+	fi
+	if [ -z $SPARK_WORKER_DIR ]
+	then
+		eerror "You must set SPARK_WORKER_DIR in /etc/spark/spark-env.sh"
+		eerror "I'd recommend /tmp/spark-worker"
+		return 1
+	fi
+	if [ -z $SPARK_WORKER_WEBUI_PORT ]
+	then
+		eerror "You must set SPARK_WORKER_WEBUI_PORT in /etc/spark/spark-env.sh"
+		eerror "The default is 8081"
+		return 1
+	fi
+	if [ -z $SPARK_MASTER_IP ]
+	then
+		eerror "You must set SPARK_MASTER_IP in /etc/spark/spark-env.sh"
+		eerror "The default is \"\`hostname\`\""
+		return 1
+	fi
+	if [ -z $SPARK_MASTER_PORT ]
+	then
+		eerror "You must set SPARK_MASTER_PORT"
+		eerror "Default is 7077"
+		return 1
+	fi
 	return 0
 }
 
 start() {
 	ebegin "Starting spark-worker"
 	check_config || return $?
-	SPARK_CONF_DIR="/etc/spark" start-stop-daemon --start \
-	    --exec /usr/bin/spark-class \
-	    --pidfile /var/run/spark-worker.pid \
-	    -- \
-	    org.apache.spark.deploy.worker.Worker \
-	    --ip $SPARK_MASTER_IP --p
+	nohup /usr/lib/spark-1.1.0/bin/spark-class \
+		org.apache.spark.deploy.worker.Worker \
+		--cores $SPARK_WORKER_CORES \
+		--memory $SPARK_WORKER_MEMORY \
+		--work-dir $SPARK_WORKER_DIR \
+		--webui-port $SPARK_WORKER_WEBUI_PORT \
+		spark://${SPARK_MASTER_IP}:${SPARK_MASTER_PORT} \
+		> /dev/null 2>&1 < /dev/null &
+	procpid=$!
+	echo $procpid > $pidfile
 	eend $? "Failed to start spark-worker"
 }
 
 stop() {
 	ebegin "Stopping spark-worker"
 	check_config || return $?
-	start-stop-daemon --stop \
-		--pidfile /var/run/spark-worker.pid \
-		--exec /usr/bin/spark-class
+
+	local pid=`cat $pidfile`
+	if [ -z `kill -0 $pid` ]
+	then
+		kill `cat $pidfile`
+		sleep 5
+		ps `cat $pidfile` > /dev/null
+		if [ "$?" = "0" ]
+		then
+			echo "Didn't gracefully shutdown within 5 seconds, killing..."
+			kill -9 `cat $pidfile`
+		fi
+		rm $pidfile
+	else
+		echo "spark-worker wasn't running"
+	fi
 	eend $? "Failed to stop spark-worker"
 }
