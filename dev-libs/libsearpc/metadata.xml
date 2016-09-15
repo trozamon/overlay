@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>alec@alectenharmsel.com</email>
+	</maintainer>
+	<longdescription lang="en">
+		searpc is an RPC framework used by Seafile. Why use an established RPC
+		framework when you can write your own, amirite? /sarc
+	</longdescription>
+</pkgmetadata>
