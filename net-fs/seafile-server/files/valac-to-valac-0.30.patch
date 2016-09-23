@@ -1,0 +1,20 @@
+--- a/lib/Makefile.am	2016-09-02 22:05:11.000000000 -0600
++++ b/lib/Makefile.am	2016-09-20 20:58:01.121530666 -0600
+@@ -35,7 +35,7 @@
+ 
+ seafile-object.h: ${seafile_object_define}
+ 	rm -f $@
+-	valac --pkg posix ${seafile_object_define} -C -H seafile-object.h
++	valac-0.30 --pkg posix ${seafile_object_define} -C -H seafile-object.h
+ 
+ DISTCLEANFILES = ${searpc_gen}
+ 
+@@ -74,7 +74,7 @@
+ 	rm -f ${seafile_object_gen}
+ 	@rm -f vala.tmp
+ 	@touch vala.tmp
+-	valac -C --pkg posix $^
++	valac-0.30 -C --pkg posix $^
+ 	@mv -f vala.tmp $@
+ 
+ ${seafile_object_gen}: vala.stamp
