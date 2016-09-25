@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE pkgmetadata SYSTEM "http://www.gentoo.org/dtd/metadata.dtd">
+<pkgmetadata>
+	<maintainer type="person">
+		<email>alec@alectenharmsel.com</email>
+	</maintainer>
+	<longdescription lang="en">
+		An Apache-2.0 licensed git service, aiming to be compatible with GitHub.
+	</longdescription>
+</pkgmetadata>
