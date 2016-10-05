@@ -18,7 +18,7 @@ IUSE="mysql postgres python"
 RDEPEND="net-libs/ccnet
 dev-lang/vala:0.30
 dev-libs/libsearpc
-dev-libs/libevent
+net-libs/libevhtp
 mysql? ( dev-db/mariadb )
 postgres? ( dev-db/postgresql:9.5 )
 python? ( dev-lang/python:2.7 )"
@@ -37,11 +37,11 @@ src_prepare() {
 }
 
 src_configure() {
-	econf \
+	pyexecdir="/usr/lib/python2.7/site-packages" econf \
 		$(use_with mysql) \
 		$(use_with postgres postgresql) \
 		$(use_enable python) \
-		--diable-fuse \
+		--disable-fuse \
 		--enable-console
 }
 
