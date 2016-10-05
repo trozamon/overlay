@@ -18,6 +18,7 @@ IUSE="ldap python"
 RDEPEND="dev-libs/libsearpc
 dev-db/sqlite:3
 dev-libs/libevent
+dev-db/libzdb
 dev-lang/vala:0.30
 ldap? ( net-nds/openldap )
 python? ( dev-lang/python:2.7 )
