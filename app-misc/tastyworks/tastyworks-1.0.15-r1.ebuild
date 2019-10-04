@@ -21,8 +21,13 @@ S="${WORKDIR}"
 src_install() {
 	insinto /opt/tastyworks
 	doins -r opt/tastyworks/app
-	doins -r opt/tastyworks/bin
 	doins -r opt/tastyworks/runtime
+
+	into /opt/tastyworks/bin
+	doins opt/tastyworks/bin/tastyworks.desktop
+	doins opt/tastyworks/bin/tastyworks.png
+	dolib.so opt/tastyworks/bin/libapplauncher.so
+	dobin opt/tastyworks/bin/tastyworks
 
 	dosym "${ED%/}"/opt/tastyworks/bin/tastyworks /usr/bin/tastyworks
 }
