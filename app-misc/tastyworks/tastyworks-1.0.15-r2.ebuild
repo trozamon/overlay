@@ -23,11 +23,12 @@ src_install() {
 	doins -r opt/tastyworks/app
 	doins -r opt/tastyworks/runtime
 
-	into /opt/tastyworks/bin
+	insinto /opt/tastyworks/bin
 	doins opt/tastyworks/bin/tastyworks.desktop
 	doins opt/tastyworks/bin/tastyworks.png
-	dolib.so opt/tastyworks/bin/libapplauncher.so
-	dobin opt/tastyworks/bin/tastyworks
+	exeinto /opt/tastyworks/bin
+	doexe opt/tastyworks/bin/libapplauncher.so
+	doexe opt/tastyworks/bin/tastyworks
 
 	dosym "${ED%/}"/opt/tastyworks/bin/tastyworks /usr/bin/tastyworks
 }
