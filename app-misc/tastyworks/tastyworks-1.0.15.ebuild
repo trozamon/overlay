@@ -6,14 +6,14 @@ inherit java-pkg-2 rpm
 
 DESCRIPTION="Option trading for active traders"
 HOMEPAGE="https://tastyworks.com"
-SRC_URI="https://download.tastyworks.com/desktop/${PV}/tastyworks-${PV}.rpm"
+SRC_URI="https://download.tastyworks.com/desktop-1.x.x/${PV}/tastyworks-${PV}-1.x86_64.rpm"
 
 LICENSE="Tastyworks"
 SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-RDEPEND="virtual/jre:1.8"
+RDEPEND="virtual/jre:*"
 DEPEND="${RDEPEND}"
 
 S="${WORKDIR}"
@@ -21,12 +21,8 @@ S="${WORKDIR}"
 src_install() {
 	insinto /opt/tastyworks
 	doins -r opt/tastyworks/app
+	doins -r opt/tastyworks/bin
 	doins -r opt/tastyworks/runtime
-	doins opt/tastyworks/libpackager.so
-	doins opt/tastyworks/tastyworks.png
 
-	exeinto /opt/tastyworks
-	doexe opt/tastyworks/tastyworks
-
-	dosym "${ED%/}"/opt/tastyworks/tastyworks /usr/bin/tastyworks
+	dosym "${ED%/}"/opt/tastyworks/bin/tastyworks /usr/bin/tastyworks
 }
